@@ -133,14 +133,22 @@ namespace CopyJobs2023
       
         public void copyAll2()
         {
+            int rown = dataGridView1.RowCount;
 
+            for (int i = 0; i < rown; i++)
+            {
+
+                DataGridViewRow dataGridViewRow = dataGridView1.Rows[i];
+
+               
+            
 
             string q = "";
             try
             {
-                string folder1 = textBox1.Text;
-                string folder2 = textBox2.Text;
-                String komut = @"robocopy "+folder1+ " "+ folder2 +" /MIR /MT /R:5 /W:15 /NS /NC /NFL /NDL /NP /LOG+:log.txt";
+                     string folder1 = dataGridViewRow.Cells["dest1"].Value.ToString();
+                    string folder2 = dataGridViewRow.Cells["dest2"].Value.ToString();
+                    String komut = @"robocopy "+folder1+ " "+ folder2 +" /MIR /MT /R:5 /W:15 /NS /NC /NFL /NDL /NP /LOG+:log.txt";
                 System.Diagnostics.Process process = new System.Diagnostics.Process();
                 process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
                 process.StartInfo.FileName = "cmd.exe";
@@ -169,6 +177,7 @@ namespace CopyJobs2023
                 q += "error";
 
             }
+            }
 
 
 
@@ -193,25 +202,52 @@ namespace CopyJobs2023
 
         private void button2_Click(object sender, EventArgs e)
         {
-            int  rown = dataGridView1.RowCount;
+            /*
+             int  rown = dataGridView1.RowCount;
 
-            for (int i = 0; i< rown; i++)
+             for (int i = 0; i< rown; i++)
+             {
+                 this.BackColor = Color.Red;
+                 button1.BackColor = Color.Red;
+                 button2.BackColor = Color.Red;
+                 button3.BackColor = Color.Red;
+                 dataGridView1.BackgroundColor = Color.Red;
+                 DataGridViewRow dataGridViewRow = dataGridView1.Rows[i];
+                 textBox1.Text = dataGridViewRow.Cells["dest1"].Value.ToString();
+                 textBox2.Text = dataGridViewRow.Cells["dest2"].Value.ToString();
+                 copyAll2();
+                 this.BackColor = Color.White;
+                 button1.BackColor = Color.White;
+                 button2.BackColor = Color.White;
+                 button3.BackColor = Color.White;
+                 dataGridView1.BackgroundColor = Color.White;
+             }
+            */
+            if (backgroundWorker1.IsBusy != true)
             {
+
                 this.BackColor = Color.Red;
                 button1.BackColor = Color.Red;
                 button2.BackColor = Color.Red;
                 button3.BackColor = Color.Red;
                 dataGridView1.BackgroundColor = Color.Red;
-                DataGridViewRow dataGridViewRow = dataGridView1.Rows[i];
-                textBox1.Text = dataGridViewRow.Cells["dest1"].Value.ToString();
-                textBox2.Text = dataGridViewRow.Cells["dest2"].Value.ToString();
-                copyAll2();
+
+                backgroundWorker1.RunWorkerAsync();
+                button2.Text = "STOP";
+
+            }
+            else
+            {
                 this.BackColor = Color.White;
                 button1.BackColor = Color.White;
                 button2.BackColor = Color.White;
                 button3.BackColor = Color.White;
                 dataGridView1.BackgroundColor = Color.White;
+                backgroundWorker1.CancelAsync();
+                button2.Text = "Copy Now";
             }
+
+
 
         }
 
@@ -283,6 +319,30 @@ namespace CopyJobs2023
         private void button4_Click(object sender, EventArgs e)
         {
             this.Hide();
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            copyAll2();
+
+        }
+
+        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            MessageBox.Show("asd");
+
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+
+            button2.Text = "Copy Now";
+            this.BackColor = Color.White;
+            button1.BackColor = Color.White;
+            button2.BackColor = Color.White;
+            button3.BackColor = Color.White;
+            dataGridView1.BackgroundColor = Color.White;
+
         }
     }
 }
